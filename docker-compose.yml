@@ -1,0 +1,6 @@
+simple:
+  build: .
+  working_dir: /go/src/imobi-crawler
+  command: go run main.go
+  volumes:
+    - .:/go/src/imobi-crawler
