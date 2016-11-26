@@ -3,13 +3,16 @@ package martins
 import(
   "fmt"
   "log"
+  "sync"
+  "time"
   "strings"
   "encoding/json"
   "github.com/PuerkitoBio/goquery"
   "imobi-crawler/models"
 )
 
-func Crawler() {
+func Crawler(wg *sync.WaitGroup) {
+  fmt.Println("%s", time.Now())
   doc, err := goquery.NewDocument("http://www.martinsimoveispi.com.br/pesquisar?operacao=VENDA&cidade=1&bairro=0&tipo=0&quartos=0&area=0&valorInicial=&valorFinal=")
 
   if err != nil{
@@ -39,5 +42,6 @@ func Crawler() {
 
   json1, _ := json.Marshal(properties)
   fmt.Println(string(json1))
+  wg.Done()
 }
 

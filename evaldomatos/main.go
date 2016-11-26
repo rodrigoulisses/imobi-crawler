@@ -3,13 +3,16 @@ package evaldomatos
 import(
   "fmt"
   "log"
+  "time"
+  "sync"
   // "strings"
   "encoding/json"
   "github.com/PuerkitoBio/goquery"
   "imobi-crawler/models"
 )
 
-func Crawler() {
+func Crawler(wg *sync.WaitGroup) {
+  fmt.Println("%s", time.Now())
   doc, err := goquery.NewDocument("http://evaldomatos.com.br/imoveis/filtro/?situacao=venda&tipo=x&quartos=x&garagem=x&bairro=x&valor=x&x=44&y=33")
 
   if err != nil {
@@ -34,4 +37,6 @@ func Crawler() {
 
   json1, _ := json.Marshal(properties)
   fmt.Println("%s", string(json1))
+
+  wg.Done()
 }
