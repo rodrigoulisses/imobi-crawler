@@ -2,5 +2,7 @@ simple:
   build: .
   working_dir: /go/src/imobi-crawler
   command: go run main.go
+  ports: 
+    - "4000:4000"
   volumes:
     - .:/go/src/imobi-crawler

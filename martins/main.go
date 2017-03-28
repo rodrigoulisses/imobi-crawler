@@ -1,18 +1,14 @@
 package martins
 
 import(
-  "fmt"
   "log"
   "sync"
-  "time"
   "strings"
-  "encoding/json"
   "github.com/PuerkitoBio/goquery"
   "imobi-crawler/models"
 )
 
-func Crawler(wg *sync.WaitGroup) {
-  fmt.Println("%s", time.Now())
+func Crawler(wg *sync.WaitGroup, properties *[]models.Property) {
   doc, err := goquery.NewDocument("http://www.martinsimoveispi.com.br/pesquisar?operacao=VENDA&cidade=1&bairro=0&tipo=0&quartos=0&area=0&valorInicial=&valorFinal=")
 
   if err != nil{
@@ -23,7 +19,6 @@ func Crawler(wg *sync.WaitGroup) {
 
   // Find the review items
   var teste bool
-  var properties []models.Property
 
   doc.Find(".properties-full .property-thumb-info").Each(func(i int, s *goquery.Selection) {
     // For each item found, get the band and title
@@ -37,11 +32,9 @@ func Crawler(wg *sync.WaitGroup) {
     property.Kind = strings.Split(s.Find(".property-thumb-info-content address").Text(), " - ")[1]
     property.Image, teste = s.Find(".property-thumb-info-image img").Attr("src")
 
-    properties = append(properties, property)
+    *properties = append(*properties, property)
   })
 
-  json1, _ := json.Marshal(properties)
-  fmt.Println(string(json1))
   wg.Done()
 }
 

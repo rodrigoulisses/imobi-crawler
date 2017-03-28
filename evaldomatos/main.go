@@ -1,18 +1,13 @@
 package evaldomatos
 
 import(
-  "fmt"
   "log"
-  "time"
   "sync"
-  // "strings"
-  "encoding/json"
   "github.com/PuerkitoBio/goquery"
   "imobi-crawler/models"
 )
 
-func Crawler(wg *sync.WaitGroup) {
-  fmt.Println("%s", time.Now())
+func Crawler(wg *sync.WaitGroup, properties *[]models.Property) {
   doc, err := goquery.NewDocument("http://evaldomatos.com.br/imoveis/filtro/?situacao=venda&tipo=x&quartos=x&garagem=x&bairro=x&valor=x&x=44&y=33")
 
   if err != nil {
@@ -20,8 +15,6 @@ func Crawler(wg *sync.WaitGroup) {
 
     return
   }
-
-  var properties []models.Property
 
   doc.Find(".imoveis .row-fluid").Each(func(i int, s *goquery.Selection) {
     // For each item found, get the band and title
@@ -32,11 +25,8 @@ func Crawler(wg *sync.WaitGroup) {
     property.Price = s.Find("p.valor span.el_2").Text()
     property.Image, _ = s.Find("img.wp-post-image").Attr("src")
 
-    properties = append(properties, property)
+    *properties = append(*properties, property)
   })
-
-  json1, _ := json.Marshal(properties)
-  fmt.Println("%s", string(json1))
 
   wg.Done()
 }
