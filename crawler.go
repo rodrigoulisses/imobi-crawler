@@ -2,25 +2,25 @@ package main
 
 import(
   "fmt"
-  "net/http"
   "sync"
   //"database/sql"
-  //"github.com/lib/pq"
   "encoding/json"
   "imobi-crawler/martins"
   "imobi-crawler/evaldomatos"
   "imobi-crawler/models"
 )
 
-func main() {
-  http.HandleFunc("/", handle)
-  http.ListenAndServe(":4000", nil)
-}
+func main (){
+  db, err := sql.Open("postgres", "postgres://postgres:postgres@postgres/imobi-crwaler?sslmode=verify-full")
 
-func handle(w http.ResponseWriter, r *http.Request){
+  if err != nil{
+   fmt.Println("Erro de conexão")
+  }
+
+  fmt.Println(db)
+
   var properties []models.Property
 
-  fmt.Println(r)
   var wg sync.WaitGroup
   wg.Add(2)
 
@@ -30,5 +30,5 @@ func handle(w http.ResponseWriter, r *http.Request){
   wg.Wait()
 
   json1, _ := json.Marshal(properties)
-  fmt.Fprintf(w, string(json1))
+  fmt.Println(string(json1))
 }

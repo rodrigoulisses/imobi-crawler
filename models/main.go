@@ -7,4 +7,7 @@ type Property struct {
   Price string
   Link string
   Image string
+  Area float64
+  Bedroom int64
+  Bathroom int64
 }

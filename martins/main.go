@@ -6,6 +6,7 @@ import(
   "strings"
   "github.com/PuerkitoBio/goquery"
   "imobi-crawler/models"
+  "strconv"
 )
 
 func Crawler(wg *sync.WaitGroup, properties *[]models.Property) {
@@ -31,6 +32,16 @@ func Crawler(wg *sync.WaitGroup, properties *[]models.Property) {
     property.Code = strings.Split(s.Find(".property-thumb-info-content address").Text(), " - ")[0]
     property.Kind = strings.Split(s.Find(".property-thumb-info-content address").Text(), " - ")[1]
     property.Image, teste = s.Find(".property-thumb-info-image img").Attr("src")
+    property.Area, _ = strconv.ParseFloat(strings.Split(s.Find(".property-thumb-info .amenities .pull-left li").Text(), " ")[1], 64)
+    s.Find(".property-thumb-info .amenities .pull-right li").Each(func(i int, selector *goquery.Selection){
+      if i == 0 {
+        bedroom := strings.TrimPrefix(selector.Text(), " ")
+        property.Bedroom, _ = strconv.ParseInt(bedroom, 10, 64)
+      } else {
+        bathroom := strings.TrimPrefix(selector.Text(), " ")
+        property.Bathroom, _ = strconv.ParseInt(bathroom, 10, 64)
+      }
+    })
 
     *properties = append(*properties, property)
   })
