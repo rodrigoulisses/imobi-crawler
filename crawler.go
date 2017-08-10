@@ -1,34 +1,27 @@
 package main
 
 import(
-  "fmt"
   "sync"
-  //"database/sql"
-  "encoding/json"
   "imobi-crawler/martins"
   "imobi-crawler/evaldomatos"
-  "imobi-crawler/models"
+  _ "github.com/lib/pq"
+  "database/sql"
+  "fmt"
 )
 
 func main (){
-  db, err := sql.Open("postgres", "postgres://postgres:postgres@postgres/imobi-crwaler?sslmode=verify-full")
+  db, err := sql.Open("postgres", "user=rodrigoulissesesilva dbname=imobi_dev sslmode=disable")
 
   if err != nil{
-   fmt.Println("Erro de conexão")
+    fmt.Println(err)
+    return
   }
-
-  fmt.Println(db)
-
-  var properties []models.Property
 
   var wg sync.WaitGroup
   wg.Add(2)
 
-  go martins.Crawler(&wg, &properties)
-  go evaldomatos.Crawler(&wg, &properties)
+  go martins.Crawler(&wg, db)
+  go evaldomatos.Crawler(&wg, db)
 
   wg.Wait()
-
-  json1, _ := json.Marshal(properties)
-  fmt.Println(string(json1))
 }
